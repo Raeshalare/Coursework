@@ -3,11 +3,7 @@
     <!-- Левая часть: список товаров -->
     <div class="cart-items">
       <h2>Ваша корзина</h2>
-      <div
-        v-for="item in items"
-        :key="item.id"
-        class="cart-item"
-      >
+      <div v-for="item in items" :key="item.id"class="cart-item">
         <img :src="item.image" alt="" class="cart-item-image" />
         <div class="cart-item-info">
           <h3>{{ item.name }}</h3>

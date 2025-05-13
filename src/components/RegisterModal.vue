@@ -23,8 +23,8 @@
 
         <div class="form-group">
           <label>Фамилия:</label>
-          <input v-model="form.lastName" type="text" class="input-field" />
-          <span v-if="errors.lastName" class="error">{{ errors.lastName }}</span>
+          <input v-model="form.Surname" type="text" class="input-field" />
+          <span v-if="errors.Surname" class="error">{{ errors.Surname }}</span>
         </div>
 
         <div class="form-group">
@@ -60,7 +60,7 @@ const form = reactive({
   login: '',
   password: '',
   firstName: '',
-  lastName: '',
+  Surname: '',
   gender: ''
 })
 
@@ -68,7 +68,7 @@ const errors = reactive({
   login: '',
   password: '',
   firstName: '',
-  lastName: '',
+  Surname: '',
   gender: ''
 })
 
@@ -81,7 +81,7 @@ function validate() {
   errors.login = form.login ? '' : 'Обязательное поле'
   errors.password = /^[A-Za-z0-9]+$/.test(form.password) ? '' : 'Только латинские буквы и цифры'
   errors.firstName = form.firstName ? '' : 'Обязательное поле'
-  errors.lastName = form.lastName ? '' : 'Обязательное поле'
+  errors.Surname = form.Surname ? '' : 'Обязательное поле'
   errors.gender = form.gender ? '' : 'Выберите пол'
 
 
@@ -106,7 +106,7 @@ function register() {
   if (!validate()) return
 
   emit('registered', { ...form }) 
-  Object.assign(form, {login: '', password: '', firstName: '', lastName: '', gender: ''  }) // Очищаем форму
+  Object.assign(form, {login: '', password: '', firstName: '', Surname: '', gender: ''  }) // Очищаем форму
   close()
 }
 </script>

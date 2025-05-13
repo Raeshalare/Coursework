@@ -1,22 +1,21 @@
 <template>
   <div>
-    <Header v-model:search="searchQuery" :products="products" :cart-items="cartItems" :currentUser="currentUser" :current-page="currentPage" @change-page="handleChangePage" @search="handleSearch" @open-register="showRegister = true" @open-login="showLogin = true" @logout="handleLogout"/>
-
-
-
+    <Header v-model:search="searchQuery" :products="products" :cart-items="cartItems" :currentUser="currentUser" @change-page="handleChangePage" @search="handleSearch" @open-register="showRegister = true" @open-login="showLogin = true" @logout="Logout"/>
     <main>
-      <!-- Показ страниц в зависимости от текущей активности -->
+
       <Catalog v-if="activePage === 'catalog'" :products="filteredProducts" @add-to-cart="addToCart" />
-      <Cart v-if="activePage === 'cart'" :items="cartItems" @increase-quantity="increaseQuantity" @decrease-quantity="decreaseQuantity" @remove-item="removeItem" @change-page="handleChangePage" />
+      <Cart v-if="activePage === 'cart'" :items="cartItems" @increase-quantity="PlusOne" @decrease-quantity="MinusOne" @remove-item="removeItem" @change-page="handleChangePage" />
       <Home v-if="activePage === 'home'" />
       <UserPage v-if="activePage === 'account'" :user="currentUser" @update-user="updateUser" />
       <AdminPage v-if="activePage === 'admin'" :products="products" @update-products="updateProducts" />
-      <!-- Страница оформления заказа -->
+
+
+
       <CheckoutPage v-if="activePage === 'checkout'" :cartItems="cartItems" :users="users" @confirm-order="handleConfirmOrder" />
     </main>
   </div>
 
-  <!-- Модальные окна для регистрации и входа -->
+
   <RegisterModal :visible="showRegister" :users="users" @close="showRegister = false" @registered="addUser" />
   <LoginModal :visible="showLogin" :users="users" @close="closeLoginModal" @login-success="handleLoginSuccess" />
 </template>
@@ -31,7 +30,7 @@ import RegisterModal from './components/RegisterModal.vue'
 import LoginModal from './components/LoginModal.vue'
 import UserPage from './components/UserPage.vue'
 import AdminPage from './components/AdminPage.vue'
-import CheckoutPage from './components/pageCheckout.vue'  
+import CheckoutPage from './components/pageEnding.vue'  
 
 
 const showLogin = ref(false)
@@ -51,7 +50,7 @@ const closeLoginModal = () => {
   showLogin.value = false  
 }
 
-const handleLogout = () => {
+const Logout = () => {
   currentUser.value = null
   activePage.value = 'home' 
 }
@@ -146,12 +145,12 @@ const addToCart = (product) => {
   }
 }
 
-const increaseQuantity = (product) => {
+const PlusOne = (product) => {
   const item = cartItems.value.find(p => p.id === product.id)
   if (item) item.quantity++
 }
 
-const decreaseQuantity = (product) => {
+const MinusOne = (product) => {
   const item = cartItems.value.find(p => p.id === product.id)
   if (item && item.quantity > 1) {
     item.quantity--

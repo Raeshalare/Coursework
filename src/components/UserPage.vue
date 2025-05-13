@@ -5,19 +5,19 @@
       <form @submit.prevent="saveUserData">
         <div class="form-group">
           <label for="city">Город:</label>
-          <input type="text" id="city" class="address-input" v-model="localUserData.city" />
+          <input type="text" id="city" class="address-input" v-model="UserData.city" />
         </div>
         <div class="form-group">
           <label for="street">Улица:</label>
-          <input type="text" id="street" class="address-input" v-model="localUserData.street" />
+          <input type="text" id="street" class="address-input" v-model="UserData.street" />
         </div>
         <div class="form-group">
           <label for="house">Дом:</label>
-          <input type="text" id="house" class="address-input" v-model="localUserData.house" />
+          <input type="text" id="house" class="address-input" v-model="UserData.house" />
         </div>
         <div class="form-group">
           <label for="apartment">Квартира:</label>
-          <input type="text" id="apartment" class="address-input" v-model="localUserData.apartment" />
+          <input type="text" id="apartment" class="address-input" v-model="UserData.apartment" />
         </div>
 
         <button v-if="hasChanges || saved" type="submit" class="save-button" :class="{ saved: saved }" :disabled="saved">
@@ -39,7 +39,7 @@ const emit = defineEmits(['update-user'])
 
 const saved = ref(false)
 
-const localUserData = ref({
+const UserData = ref({
   city: props.user.city || '',
   street: props.user.street || '',
   house: props.user.house || '',
@@ -48,21 +48,21 @@ const localUserData = ref({
 
 const hasChanges = computed(() => {
   return (
-    localUserData.value.city !== props.user.city ||
-    localUserData.value.street !== props.user.street ||
-    localUserData.value.house !== props.user.house ||    
-    localUserData.value.apartment !== props.user.apartment
+    UserData.value.city !== props.user.city ||
+    UserData.value.street !== props.user.street ||
+    UserData.value.house !== props.user.house ||    
+    UserData.value.apartment !== props.user.apartment
   )
 })
 
-watch(localUserData, () => {
+watch(UserData, () => {
   if (saved.value) {
     saved.value = false
   }
 }, { deep: true })
 
 const saveUserData = () => {
-  emit('update-user', { ...localUserData.value })
+  emit('update-user', { ...UserData.value })
   saved.value = true
 }
 </script>

@@ -59,7 +59,6 @@ const errors = ref({
 
 const validateForm = () => {
   let isValid = true
-  // Очистим ошибки
   errors.value = {
     name: '',
     price: '',

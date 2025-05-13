@@ -13,20 +13,9 @@
 
         <div class="nav-center">
           <div class="search">
-            <input
-              type="text"
-              placeholder="Введите что нибудь"
-              class="search-input"
-              v-model="modelSearch"
-            />
-            <button class="search-button" :disabled="!search.trim()" @click="onSearch">Поиск</button>
-
+            <input type="text" placeholder="Введите что нибудь" class="search-input" v-model="modelSearch" />
             <ul v-if="filteredSuggestions.length" class="suggestions">
-              <li
-                v-for="product in filteredSuggestions"
-                :key="product.id"
-                @click="selectSuggestion(product.name)"
-              >
+              <li v-for="product in filteredSuggestions" :key="product.id" @click="selectSuggestion(product.name)" >
                 {{ product.name }}
               </li>
             </ul>
@@ -34,13 +23,13 @@
         </div>
 
         <div class="nav-right">
-          <button v-if="isAuthenticated" @click="goToAccount" class="auth-button">Мой аккаунт</button>
-          <button v-if="isAdmin" @click="goToAdminPage" class="auth-button">Админ-панель</button>
+          <button v-if="Authentication" @click="goToAccount" class="auth-button">Мой аккаунт</button>
+          <button v-if="AdminOrNot" @click="goToAdminPage" class="auth-button">Админ-панель</button>
 
-          <button v-if="!isAuthenticated" class="auth-button" @click="$emit('open-login')">Войти</button>
-          <button v-if="!isAuthenticated" class="auth-button" @click="$emit('open-register')">Зарегистрироваться</button>
+          <button v-if="!Authentication" class="auth-button" @click="$emit('open-login')">Войти</button>
+          <button v-if="!Authentication" class="auth-button" @click="$emit('open-register')">Зарегистрироваться</button>
 
-          <button v-if="isAuthenticated" class="logout-button" @click="logout">Выйти</button>
+          <button v-if="Authentication" class="logout-button" @click="logout">Выйти</button>
 
           <button @click="goCart" class="cart-button">
             🛒<span class="cart-count">{{ cartItemsCount }}</span>
@@ -49,13 +38,13 @@
       </nav>
     </header>
 
-    <!-- Баннер только на главной -->
     <div v-if="currentPage === 'home'" class="promo-banner-wrapper" :class="{ 'scrolled': isScrolled }">
       <div class="promo-banner-text">
         <span v-for="n in 16" :key="n">% АКЦИЯ %</span>
       </div>
     </div>
   </div>
+
 </template>
 
 <script setup>
@@ -73,8 +62,8 @@ const emit = defineEmits(['change-page', 'search', 'open-register', 'open-login'
 const modelSearch = defineModel('search')
 const search = ref('')
 
-const isAuthenticated = computed(() => !!props.currentUser)
-const isAdmin = computed(() => props.currentUser && props.currentUser.role === 'admin')
+const Authentication = computed(() => !!props.currentUser)
+const AdminOrNot = computed(() => props.currentUser && props.currentUser.role === 'admin')
 
 const goHome = () => emit('change-page', 'home')
 const goCatalog = () => {
@@ -83,41 +72,20 @@ const goCatalog = () => {
 }
 const goCart = () => emit('change-page', 'cart')
 const goToAccount = () => emit('change-page', 'account')
-const goToAdminPage = () => isAdmin.value && emit('change-page', 'admin')
-const onSearch = () => {
-  if (modelSearch.value.trim()) {
-    emit('change-page', 'catalog')
-    emit('search', modelSearch.value)
-  }
-}
+const goToAdminPage = () => AdminOrNot.value && emit('change-page', 'admin')
+
 const filteredSuggestions = computed(() =>
   search.value.trim()
     ? props.products.filter(p => p.name.toLowerCase().includes(search.value.toLowerCase())).slice(0, 5)
     : []
 )
-const selectSuggestion = (productName) => {
-  modelSearch.value = productName
-  onSearch()
-}
+
 const cartItemsCount = computed(() =>
   props.cartItems.reduce((acc, item) => acc + item.quantity, 0)
 )
 const logout = () => emit('logout')
 
-// Стейт прокрутки
-const isScrolled = ref(false)
 
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 150
-}
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
 </script>
 
 <style scoped>
@@ -150,14 +118,14 @@ onUnmounted(() => {
   box-sizing: border-box;
   padding: 10px 0;
   position: fixed;
-  top: 100px; /* под хедером */
+  top: 100px; 
   left: 0;
   z-index: 999;
   transition: top 0.3s ease;
 }
 
 .promo-banner-wrapper.scrolled {
-  top: 60px; /* баннер прячется под хедером */
+  top: 60px; 
 }
 
 .promo-banner-text {
@@ -186,7 +154,7 @@ onUnmounted(() => {
 }
 
 body {
-  margin-top: 140px; /* под хедер и баннер */
+  margin-top: 140px; 
   background-color: #ffffff;
 }
 

@@ -6,9 +6,7 @@
       <div class="filter-group">
         <label>Категории:</label>
         <div v-for="category in categories" :key="category">
-          <input type="checkbox" :value="category" v-model="selectedCategories" />
-          {{ category }}
-        </div>
+          <input type="checkbox" :value="category" v-model="selectedCategories" />{{ category }}</div>
       </div>
 
       <div class="filter-price">
