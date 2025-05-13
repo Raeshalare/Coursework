@@ -1,13 +1,11 @@
 <template>
   <div class="main-page">
-    <!-- Большой блок -->
     <div class="large-block">
       <img src="../assets/images/SuprastinBanner.jpg" alt="Большой блок" class="block-image" />
     </div>
 
 
 
-    <!-- Два блока по ширине -->
     <div class="two-small-blocks">
       <div class="small-block">
         <img src="../assets/images/Linkas.jpg" alt="Малый блок 1" class="block-image" />
@@ -19,15 +17,12 @@
 
 
 
-    <!-- Высокий блок -->
     <div class="tall-block">
       <img src="../assets/images/TromboMag.jpg" alt="Высокий блок" class="block-image" />
     </div>
 
 
 
-
-    <!-- Карусель товаров дня -->
     <div class="daily-products-carousel">
       <h2 class="section-title">Товары дня</h2>
       <div class="carousel-container">
@@ -53,8 +48,6 @@
 
 
 
-
-    <!-- Карусель отзывов -->
 <div class="reviews-carousel">
   <h2 class="section-title">Отзывы покупателей</h2>
   <div class="carousel-container">
