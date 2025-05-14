@@ -13,12 +13,10 @@
 
         <div class="nav-center">
           <div class="search">
-            <input type="text" placeholder="Введите что нибудь" class="search-input" v-model="modelSearch" />
-            <ul v-if="filteredSuggestions.length" class="suggestions">
-              <li v-for="product in filteredSuggestions" :key="product.id" @click="selectSuggestion(product.name)" >
-                {{ product.name }}
-              </li>
-            </ul>
+          <input type="text" placeholder="Введите что нибудь" class="search-input" v-model="modelSearch" />
+          <ul v-if="filteredSuggestions.length" class="suggestions">
+          <li v-for="product in filteredSuggestions" :key="product.id" @click="selectSuggestion(product.name)" >{{ product.name }}</li>
+          </ul>
           </div>
         </div>
 
@@ -34,8 +32,13 @@
           <button @click="goCart" class="cart-button">
             🛒<span class="cart-count">{{ cartItemsCount }}</span>
           </button>
+
+
+          
         </div>
       </nav>
+
+
     </header>
 
     <div v-if="currentPage === 'home'" class="promo-banner-wrapper" :class="{ 'scrolled': isScrolled }">

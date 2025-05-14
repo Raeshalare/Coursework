@@ -1,6 +1,5 @@
 <template>
   <div class="cart-wrapper">
-    <!-- Левая часть: список товаров -->
     <div class="cart-items">
       <h2>Ваша корзина</h2>
       <div v-for="item in items" :key="item.id"class="cart-item">
@@ -12,9 +11,9 @@
             <span>{{ item.price }} ₽</span>
 
             <div class="quantity-controls">
-              <button @click="$emit('decrease-quantity', item)">-</button>
-              <span>{{ item.quantity }}</span>
-              <button @click="$emit('increase-quantity', item)">+</button>
+            <button @click="$emit('decrease-quantity', item)">-</button>
+            <span>{{ item.quantity }}</span>
+            <button @click="$emit('increase-quantity', item)">+</button>
             </div>
           </div>
 
@@ -23,7 +22,11 @@
       </div>
     </div>
 
-    <!-- Правая часть: итоговая сумма -->
+
+
+
+
+
     <div class="cart-summary">
       <h3>Итого</h3>
       <p class="total">{{ totalPrice }} ₽</p>
