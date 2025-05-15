@@ -1,27 +1,33 @@
 <template>
   <div>
-    <Header v-model:search="searchQuery" :products="products" :cart-items="cartItems" :currentUser="currentUser" @change-page="handleChangePage" @search="handleSearch" @open-register="showRegister = true" @open-login="showLogin = true" @logout="Logout"/>
+    <Header 
+      v-model:search="searchQuery" 
+      :products="products" 
+      :cart-items="cartItems" 
+      :currentUser="currentUser" 
+      @change-page="handleChangePage" 
+      @search="handleSearch" 
+      @open-register="showRegister = true" 
+      @open-login="showLogin = true" 
+      @logout="Logout"
+    />
     <main>
-
       <Catalog v-if="activePage === 'catalog'" :products="filteredProducts" @add-to-cart="addToCart" />
       <Cart v-if="activePage === 'cart'" :items="cartItems" @increase-quantity="PlusOne" @decrease-quantity="MinusOne" @remove-item="removeItem" @change-page="handleChangePage" />
       <Home v-if="activePage === 'home'" />
       <UserPage v-if="activePage === 'account'" :user="currentUser" @update-user="updateUser" />
       <AdminPage v-if="activePage === 'admin'" :products="products" @update-products="updateProducts" />
-
-
-
       <CheckoutPage v-if="activePage === 'checkout'" :cartItems="cartItems" :users="users" @confirm-order="handleConfirmOrder" />
     </main>
+    <Footer />
+
+    <RegisterModal :visible="showRegister" :users="users" @close="showRegister = false" @registered="addUser" />
+    <LoginModal :visible="showLogin" :users="users" @close="closeLoginModal" @login-success="handleLoginSuccess" />
   </div>
-
-
-  <RegisterModal :visible="showRegister" :users="users" @close="showRegister = false" @registered="addUser" />
-  <LoginModal :visible="showLogin" :users="users" @close="closeLoginModal" @login-success="handleLoginSuccess" />
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Header from './components/Header.vue'
 import Catalog from './components/Catalog.vue'
 import Cart from './components/CartPage.vue'
@@ -31,49 +37,132 @@ import LoginModal from './components/LoginModal.vue'
 import UserPage from './components/UserPage.vue'
 import AdminPage from './components/AdminPage.vue'
 import CheckoutPage from './components/pageEnding.vue'  
+import Footer from './components/Footer.vue'
 
 
-const showLogin = ref(false)
+const USERS_STORAGE_KEY = 'vueMedUsers'
+
+
+const loadUsers = () => {
+  const usersJSON = localStorage.getItem(USERS_STORAGE_KEY)
+  if (usersJSON) {
+    try {
+      return JSON.parse(usersJSON)
+    } catch {
+      return []
+    }
+  }
+  // Дефолтный админ
+  return [
+    { login: 'admin', password: 'admin', firstName: 'Admin', lastName: 'admin', gender: 'admin', city: '', street: '', house: '', apartment: '', role: 'admin' },
+  ]
+}
+
+const saveUsers = (users) => {
+  localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
+}
+
+
+const users = ref(loadUsers())
 const currentUser = ref(null)
+const showLogin = ref(false)
+const showRegister = ref(false)
+const activePage = ref('home')
+const searchQuery = ref('')
+const cartItems = ref([])
+
+
+watch(users, (newUsers) => {
+  saveUsers(newUsers)
+}, { deep: true })
+
+
+const addUser = (user) => {
+  users.value.push(user)
+
+}
+
+
+const updateUser = (updatedUser) => {
+  const index = users.value.findIndex(u => u.login === updatedUser.login)
+  if (index !== -1) {
+    users.value[index] = updatedUser
+    if (currentUser.value?.login === updatedUser.login) {
+      currentUser.value = updatedUser
+    }
+  }
+}
 
 const handleLoginSuccess = (user) => {
   currentUser.value = user
-  showLogin.value = false  
+  showLogin.value = false
   if (user.role === 'admin') {
-    activePage.value = 'admin'  
+    activePage.value = 'admin'
   } else {
-    activePage.value = 'account'  
+    activePage.value = 'account'
   }
 }
 
 const closeLoginModal = () => {
-  showLogin.value = false  
+  showLogin.value = false
 }
 
 const Logout = () => {
   currentUser.value = null
-  activePage.value = 'home' 
+  activePage.value = 'home'
 }
 
-const showRegister = ref(false)
-const activePage = ref('home')
-const searchQuery = ref('')
 
-const users = ref([
-  { login: 'admin', password: 'admin', firstName: 'Admin', lastName: 'admin', gender: 'admin', city: '', street: '', house: '', apartment: '', role: 'admin' },
-])
+const filteredProducts = computed(() => {
+  if (!searchQuery.value.trim()) return products.value
+  return products.value.filter(p =>
+    p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+})
 
-const addUser = (user) => {
-  users.value.push(user)
+
+const handleChangePage = (newPage) => {
+  activePage.value = newPage
 }
 
-const updateUser = (updatedUser) => {
-  const userIndex = users.value.findIndex(user => user.login === updatedUser.login)
-  if (userIndex !== -1) {
-    users.value[userIndex] = updatedUser
-    currentUser.value = updatedUser  
+
+const handleSearch = (query) => {
+  activePage.value = 'catalog'
+  searchQuery.value = query
+}
+
+
+const addToCart = (product) => {
+  const existing = cartItems.value.find(item => item.id === product.id)
+  if (existing) {
+    existing.quantity += 1
+  } else {
+    cartItems.value.push({ ...product, quantity: 1 })
   }
 }
+
+const PlusOne = (product) => {
+  const item = cartItems.value.find(p => p.id === product.id)
+  if (item) item.quantity++
+}
+
+const MinusOne = (product) => {
+  const item = cartItems.value.find(p => p.id === product.id)
+  if (item && item.quantity > 1) {
+    item.quantity--
+  }
+}
+
+const removeItem = (product) => {
+  cartItems.value = cartItems.value.filter(p => p.id !== product.id)
+}
+
+const updateProducts = (updatedProducts) => {
+  products.value = updatedProducts
+}
+
+
+
 
 const products = ref([
   { id: 1, name: 'Парацетамол 500мг', price: 50, image: new URL('./assets/images/Catalog/paracetamol.webp', import.meta.url).href, category: 'Таблетки', description: 'Обезболивающее и жаропонижающее средство.' },
@@ -117,51 +206,5 @@ const products = ref([
   { id: 41, name: 'Цитрамон П №10', price: 45, image: new URL('./assets/images/citramon.png', import.meta.url).href, category: 'Обезболивающие препараты', description: 'Комбинированный препарат для снятия головной боли и жара.'},
   { id: 42  , name: 'Смекта порошок', price: 130, image: new URL('./assets/images/smekta.webp', import.meta.url).href, category: 'Препараты для желудка', description: 'Сорбент для лечения диареи и расстройства пищеварения.' }
 ])
-
-const filteredProducts = computed(() => {
-  if (!searchQuery.value.trim()) return products.value
-  return products.value.filter(p =>
-    p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
-})
-
-const handleChangePage = (newPage) => {
-  activePage.value = newPage
-}
-
-const handleSearch = (query) => {
-  searchQuery.value = query
-  activePage.value = 'catalog'
-}
-
-const cartItems = ref([])
-
-const addToCart = (product) => {
-  const existing = cartItems.value.find(item => item.id === product.id)
-  if (existing) {
-    existing.quantity += 1  
-  } else {
-    cartItems.value.push({ ...product, quantity: 1 })  
-  }
-}
-
-const PlusOne = (product) => {
-  const item = cartItems.value.find(p => p.id === product.id)
-  if (item) item.quantity++
-}
-
-const MinusOne = (product) => {
-  const item = cartItems.value.find(p => p.id === product.id)
-  if (item && item.quantity > 1) {
-    item.quantity--
-  }
-}
-
-const removeItem = (product) => {
-  cartItems.value = cartItems.value.filter(p => p.id !== product.id)
-}
-
-const updateProducts = (updatedProducts) => {
-  products.value = updatedProducts
-}
 </script>
+

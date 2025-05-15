@@ -13,45 +13,32 @@
 
         <div class="nav-center">
           <div class="search">
-          <input type="text" placeholder="Введите что нибудь" class="search-input" v-model="modelSearch" />
-          <ul v-if="filteredSuggestions.length" class="suggestions">
-          <li v-for="product in filteredSuggestions" :key="product.id" @click="selectSuggestion(product.name)" >{{ product.name }}</li>
-          </ul>
+            <input type="text" placeholder="Введите что-нибудь" class="search-input" v-model="modelSearch" @keyup.enter="performSearch" />
+            <ul v-if="modelSearch.trim() && filteredSuggestions.length" class="suggestions">
+              <li v-for="product in filteredSuggestions" :key="product.id" @click="selectSuggestion(product.name)">
+                {{ product.name }}
+              </li>
+            </ul>
           </div>
         </div>
 
         <div class="nav-right">
           <button v-if="Authentication" @click="goToAccount" class="auth-button">Мой аккаунт</button>
           <button v-if="AdminOrNot" @click="goToAdminPage" class="auth-button">Админ-панель</button>
-
           <button v-if="!Authentication" class="auth-button" @click="$emit('open-login')">Войти</button>
           <button v-if="!Authentication" class="auth-button" @click="$emit('open-register')">Зарегистрироваться</button>
-
           <button v-if="Authentication" class="logout-button" @click="logout">Выйти</button>
-
           <button @click="goCart" class="cart-button">
             🛒<span class="cart-count">{{ cartItemsCount }}</span>
           </button>
-
-
-          
         </div>
       </nav>
-
-
     </header>
-
-    <div v-if="currentPage === 'home'" class="promo-banner-wrapper" :class="{ 'scrolled': isScrolled }">
-      <div class="promo-banner-text">
-        <span v-for="n in 16" :key="n">% АКЦИЯ %</span>
-      </div>
-    </div>
   </div>
-
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   currentPage: String,
@@ -62,34 +49,50 @@ const props = defineProps({
 
 const emit = defineEmits(['change-page', 'search', 'open-register', 'open-login', 'logout'])
 
-const modelSearch = defineModel('search')
-const search = ref('')
+const modelSearch = ref('')
 
 const Authentication = computed(() => !!props.currentUser)
 const AdminOrNot = computed(() => props.currentUser && props.currentUser.role === 'admin')
 
-const goHome = () => emit('change-page', 'home')
+const goHome = () => {
+  modelSearch.value = ''  // Очищаем строку поиска при переходе на главную
+  emit('change-page', 'home')
+}
+
 const goCatalog = () => {
-  modelSearch.value = ''
+  modelSearch.value = ''  // Очищаем строку поиска при переходе в каталог
   emit('change-page', 'catalog')
 }
+
 const goCart = () => emit('change-page', 'cart')
 const goToAccount = () => emit('change-page', 'account')
 const goToAdminPage = () => AdminOrNot.value && emit('change-page', 'admin')
 
 const filteredSuggestions = computed(() =>
-  search.value.trim()
-    ? props.products.filter(p => p.name.toLowerCase().includes(search.value.toLowerCase())).slice(0, 5)
+  modelSearch.value.trim()
+    ? props.products.filter(p => p.name.toLowerCase().includes(modelSearch.value.toLowerCase())).slice(0, 5)
     : []
 )
 
 const cartItemsCount = computed(() =>
   props.cartItems.reduce((acc, item) => acc + item.quantity, 0)
 )
+
 const logout = () => emit('logout')
 
+const performSearch = () => {
+  emit('search', modelSearch.value)
+  emit('change-page', 'catalog')
+}
 
+const selectSuggestion = (name) => {
+  modelSearch.value = name
+  emit('search', name)
+}
 </script>
+
+
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
@@ -114,38 +117,6 @@ const logout = () => emit('logout')
   z-index: 1000;
 }
 
-.promo-banner-wrapper {
-  width: 100%;
-  overflow: hidden;
-  background-color: #ca0000;
-  box-sizing: border-box;
-  padding: 10px 0;
-  position: fixed;
-  top: 100px; 
-  left: 0;
-  z-index: 999;
-  transition: top 0.3s ease;
-}
-
-.promo-banner-wrapper.scrolled {
-  top: 60px; 
-}
-
-.promo-banner-text {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  white-space: nowrap;
-  animation: marquee 12s linear infinite;
-}
-
-.promo-banner-text span {
-  display: inline-block;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  margin-right: 200px;
-}
 
 @keyframes marquee {
   0% {
