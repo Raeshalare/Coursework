@@ -209,8 +209,8 @@ const checkout = () => {
   width: 100%;
   padding: 12px;
   background-color: #ffffff;
-  color: #218c74;  /* Использую тот же цвет, что и для кнопок в хедере */
-  border: 2px solid #218c74;  /* Цвет границы такой же */
+  color: #218c74;  
+  border: 2px solid #218c74;  
   border-radius: 8px;
   font-weight: 700;
   cursor: pointer;

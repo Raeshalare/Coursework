@@ -55,12 +55,12 @@ const Authentication = computed(() => !!props.currentUser)
 const AdminOrNot = computed(() => props.currentUser && props.currentUser.role === 'admin')
 
 const goHome = () => {
-  modelSearch.value = ''  // Очищаем строку поиска при переходе на главную
+  modelSearch.value = ''  
   emit('change-page', 'home')
 }
 
 const goCatalog = () => {
-  modelSearch.value = ''  // Очищаем строку поиска при переходе в каталог
+  modelSearch.value = ''  
   emit('change-page', 'catalog')
 }
 

@@ -30,13 +30,13 @@
 
         <div class="carousel-wrapper" ref="carousel">
           <div class="carousel">
-            <div class="product-card" v-for="(product, index) in dailyProducts" :key="index">
-              <img :src="product.image" :alt="product.name" class="product-image" />
-              <div class="product-info">
-                <h3 class="product-name">{{ product.name }}</h3>
-                <button class="buy-button">Купить</button>
-              </div>
-            </div>
+          <div class="product-card" v-for="(product, index) in dailyProducts" :key="index">
+          <img :src="product.image" :alt="product.name" class="product-image" />
+          <div class="product-info">
+          <h3 class="product-name">{{ product.name }}</h3>
+          <button class="buy-button">Купить</button>
+          </div>
+          </div>
           </div>
         </div>
         
@@ -55,14 +55,14 @@
 
     <div class="carousel-wrapper" ref="reviewsCarousel">
       <div class="carousel">
-        <div class="review-card" v-for="(review, index) in reviews" :key="index">
-          <img :src="review.avatar" alt="Фото пользователя" class="review-avatar" />
-          <p class="review-text">"{{ review.text }}"</p>
-          <div class="review-stars">
-            <span v-for="n in 5" :key="n" class="star" :class="{ filled: n <= review.rating }">★</span>
-          </div>
-          <p class="review-author">– {{ review.author }}</p>
-        </div>
+      <div class="review-card" v-for="(review, index) in reviews" :key="index">
+      <img :src="review.avatar" alt="Фото пользователя" class="review-avatar" />
+      <p class="review-text">"{{ review.text }}"</p>
+      <div class="review-stars">
+      <span v-for="n in 5" :key="n" class="star" :class="{ filled: n <= review.rating }">★</span>
+      </div>
+      <p class="review-author">– {{ review.author }}</p>
+      </div>
       </div>
     </div>
     <button class="carousel-button right" @click="scrollReviewsRight">&#10095;</button>

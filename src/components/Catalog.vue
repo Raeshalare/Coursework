@@ -15,7 +15,6 @@
       </div>
     </aside>
 
-    <!-- Сетка товаров -->
     <div class="product-grid">
       <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
         <img :src="product.image" alt="" class="product-image" />
@@ -25,14 +24,14 @@
       </div>
     </div>
 
-    <!-- Пагинация -->
+
     <div class="pagination">
       <button 
         @click="changePage(currentPage - 1)" 
         :disabled="currentPage === 1"
         class="pagination-button">Назад</button>
       
-      <!-- Вывод номеров страниц -->
+
       <div class="page-numbers">
         <button 
           v-for="page in totalPages" 
@@ -51,7 +50,7 @@
     </div>
   </div>
 
-  <!-- Модалка -->
+
   <div v-if="selectedProduct" class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
       <span class="close-button" @click="closeModal">×</span>
